@@ -17,12 +17,12 @@ public class TCPClient {
 			while(true){
 				System.out.println("Digite sua mensagem:");
 				msn = fluxo.nextLine();
-				out.writeUTF(msn);
-				data = in.readUTF();
-				System.out.println("Resposta: "+ data);
 				if (msn.equals("sair")) {
 					s.close();
 				}
+				out.writeUTF(msn);
+				data = in.readUTF();
+				System.out.println("Resposta: "+ data);
 			}
 			
 			
