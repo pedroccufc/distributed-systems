@@ -1,64 +1,70 @@
 import java.net.*;
 import java.io.*;
 
-import java.util.Arrays;
-import java.lang.String;
-
 public class UDPServer{
-    public static void main(String args[]){
+    public static void main(String[] args){ 
+        String resposta = "";
+        
     	DatagramSocket aSocket = null;
 		try{
 	    	aSocket = new DatagramSocket(6789);
-					// create socket at agreed port
 			byte[] buffer = new byte[1000];
+
  			while(true){
  				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
   				aSocket.receive(request);
-				String data = new String(buffer);
 
-				int pos = 0;
-				char op = ' ';
-				String op1_ = " ";
-				String op2_ = " ";
-				double op1 = 0;
-				double op2 = 0;
-				double operacao = 0;
-				String resultado = " ";
+                if(buffer.length != 0){
+                    String exp = new String(buffer);
 
-				for (int i = 0; i < data.length(); i++) {
-					if (data.charAt(i) == '+' || data.charAt(i) == '-' || data.charAt(i) == '*' || data.charAt(i) == '/') {
-						op = data.charAt(i);
-						pos = i;
-					}
-					op1_ = data.substring(0, pos);
-					op2_ = data.substring(pos+1, data.length());
-				}
+                    System.out.println("Equação recebida: " + exp);
 
-				op1 = Double.parseDouble(op1_);
-				op2 = Double.parseDouble(op2_);
+                    char sinal = '#';
+                    int pos = 0;
 
-				switch(op){
-					case '+':
-						operacao = op1 + op2;
-						resultado = Double.toString(operacao);
-						break;
-					case '-':
-						operacao = op1 - op2;
-						resultado = Double.toString(operacao);
-						break;
-					case '*':
-						operacao = op1 * op2;
-						resultado = Double.toString(operacao);
-						break;
-					case '/':
-						operacao = op1 / op2;
-						resultado = Double.toString(operacao);
-						break;
-					default:
-						break;
-				}
-
-    			DatagramPacket reply = new DatagramPacket(resultado.getBytes(), resultado.length(),
+                    for (int i = 0; i < exp.length(); i++) {
+                        if(exp.charAt(i) == '+' || exp.charAt(i) == '-' || exp.charAt(i) == '*' || exp.charAt(i) == '/'){
+                            sinal = exp.charAt(i);
+                            pos = i;
+                            break;
+                        }
+                    }
+                                    
+                    String value_1 = exp.substring(0, pos);
+                    String value_2 = exp.substring(pos+1, exp.length());
+                           
+                    double number_1 = Double.parseDouble(value_1);
+                    double number_2 = Double.parseDouble(value_2);
+                                    
+                    double resultado = 0;
+                                    
+                    switch (sinal) {
+                        case '+':
+                            resultado = number_1 + number_2;
+                            resposta = Double.toString(resultado);
+                            break;
+                        case '-':
+                            resultado = number_1 - number_2;
+                            resposta = Double.toString(resultado);
+                            break;  
+                        case '*':
+                            resultado = number_1 * number_2;
+                            resposta = Double.toString(resultado);
+                            break; 
+                        case '/':
+                            if(number_2 != 0){
+                                resultado = number_1 / number_2;
+                                resposta = Double.toString(resultado);
+                            } else {
+                                resposta = "Impossível dividir por 0";
+                            }
+                            break;
+                        default:
+                            resposta = "Operação inválida";
+                    }
+                }
+                System.out.println("Resultado retornado: " + resposta);
+    			DatagramPacket reply = new DatagramPacket(resposta.getBytes(), resposta.length(), 
     				request.getAddress(), request.getPort());
     			aSocket.send(reply);
     		}
