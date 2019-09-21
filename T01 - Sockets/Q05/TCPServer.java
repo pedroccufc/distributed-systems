@@ -2,11 +2,12 @@ import java.net.*;
 import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 public class TCPServer {
 
-    public static ServerSocket listenSocket;   	//criando socket do servidor
-    public static Socket clientSocket1;  		//socket do cliente 1
-    public static Socket clientSocket2; 		//socket do cliente 2
+    public static ServerSocket sv;      //criando socket do servidor
+    public static Socket clientSocket1;  //socket do cliente 1
+    public static Socket clientSocket2; //socket do cliente 2
 
 
     //cria os canais de entrada e saida dos clientes 1 e 2
@@ -19,29 +20,28 @@ public class TCPServer {
     
     //inicializa a Thread de leitura dos clientes
     public void inicializaRead1(){
-        Read1 read1 = new Read1();
-        read1.start();
+        Read1 r1 = new Read1();
+        r1.start();
     }
     
     public void inicializaRead2(){
-        Read2 read2 = new Read2();
-        read2.start();
+        Read2 r2 = new Read2();
+        r2.start();
     }
-    
 
     public static void main (String[] args) {
         try{
-            listenSocket = new ServerSocket(7896);
-            clientSocket1 = listenSocket.accept();
+            sv = new ServerSocket(7896);
+            clientSocket1 = sv.accept();
             
-            System.out.println("Cliente 1: " + clientSocket1.getPort());
+            System.out.println("Cliente 01: " + clientSocket1.getPort());
             
-            clientSocket2 = listenSocket.accept();
-            System.out.println("Cliente 2: " + clientSocket2.getPort());
+            clientSocket2 = sv.accept();
+            System.out.println("Cliente 02: " + clientSocket2.getPort());
             
             //inicializa os canais de entrada e saida
             in1 = new DataInputStream( clientSocket1.getInputStream());
-            out1 =new DataOutputStream( clientSocket1.getOutputStream());
+            out1 = new DataOutputStream( clientSocket1.getOutputStream());
             
             in2 = new DataInputStream( clientSocket2.getInputStream());
             out2 = new DataOutputStream( clientSocket2.getOutputStream());
@@ -61,7 +61,6 @@ public class TCPServer {
     }
     
     public class Read1 extends Thread{      
-        @Override
         public void run(){
             System.out.println("lendo canal 1");
             while(true){
@@ -71,14 +70,11 @@ public class TCPServer {
                 } catch (IOException ex) {
                     Logger.getLogger(TCPServer.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                
             }
         }
-        
     }
     
     public class Read2 extends Thread{
-        @Override
         public void run(){
             System.out.println("lendo canal 2");
             while(true){
@@ -88,10 +84,7 @@ public class TCPServer {
                 } catch (IOException ex) {
                     Logger.getLogger(TCPServer.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                
             }
         }
     }
-    
-    
 }
