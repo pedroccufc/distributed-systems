@@ -3,47 +3,53 @@ import java.io.*;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 public class TCPClient2 {
     
-    public static DataInputStream in2;
-
-    public static Read2 read2;
+    public static DataInputStream in;
+    
+    public static Read2 r2;
     public void inicializaRead2(){
-        read2 = new Read2();
-        read2.start();
+        r2 = new Read2();
+        r2.start();
     }
     
-	public static void main (String[] args) {
-		// arguments supply message and hostname  
-        Scanner ler = new Scanner(System.in);
+    public static void main (String[] args) {
                 
-		Socket s = null;
-		try{
-			int serverPort = 7896;
-			s = new Socket("localhost", serverPort);    
-			in2 = new DataInputStream( s.getInputStream());
-			DataOutputStream out2 =new DataOutputStream( s.getOutputStream());
+        Scanner fluxo = new Scanner(System.in);
+        Socket s = null;
+
+        try{
+            int serverPort = 7896;
+            InetAddress idnet = InetAddress.getByName("localhost");
+            s = new Socket(idnet, serverPort, idnet, 1288);
+
+            in = new DataInputStream( s.getInputStream());
+            DataOutputStream out =new DataOutputStream( s.getOutputStream());
                         
-            TCPClient2 cliente2 = new TCPClient2();
-            cliente2.inicializaRead2();
+            TCPClient2 c2 = new TCPClient2();
+            c2.inicializaRead2();
                         
             while(true){
-                out2.writeUTF(ler.nextLine());      	
+                out.writeUTF(fluxo.nextLine());       
             } 
-		}catch (UnknownHostException e){System.out.println("Socket:"+e.getMessage());
-		}catch (EOFException e){System.out.println("EOF:"+e.getMessage());
-		}catch (IOException e){System.out.println("readline:"+e.getMessage());}
-    }
+        }catch (UnknownHostException e){System.out.println("Socket:"+e.getMessage());
+        }catch (EOFException e){System.out.println("EOF:"+e.getMessage());
+        }catch (IOException e){System.out.println("readline:"+e.getMessage());
+        }
+        }
 
     public class Read2 extends Thread{
         public void run(){
             while(true){
                 try {
-                    System.out.println("Cliente 01: " + in2.readUTF());
+                    System.out.println("Cliente 1: "+ in.readUTF());
                 } catch (IOException ex) {
                     Logger.getLogger(TCPClient2.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+                        
         }
     }    
+
 }
