@@ -1,24 +1,34 @@
 import java.net.*;
 import java.io.*;
 import java.util.Scanner;
-public class TCPClient {
-	public static void main (String args[]) {
-		// arguments supply message and hostname
-		Socket s = null;
-		try{
-			Scanner ler = new Scanner(System.in);
 
-			System.out.println("Digite a equação:");
-			String str = ler.nextLine();
-			
+public class TCPClient {
+	public static void main (String[] args) {
+        Scanner fluxo = new Scanner(System.in);
+		Socket s = null;
+
+		try{
 			int serverPort = 7896;
 			s = new Socket("localhost", serverPort);    
 			DataInputStream in = new DataInputStream( s.getInputStream());
-			DataOutputStream out =new DataOutputStream( s.getOutputStream());
-			out.writeUTF(str);      	// UTF is a string encoding see Sn. 4.4
-			// ===================================================================
-			String data = in.readUTF();	    // read a line of data from the stream
-			System.out.println("Reply: "+ data); 
+			DataOutputStream out = new DataOutputStream( s.getOutputStream());
+    
+            System.out.println("Digite a expressão matemática (EXEMPLO: 4+5): ");
+            String exp;
+
+            exp = fluxo.nextLine();
+            if(exp.equals("")){
+                System.out.println("Mensagem vazia!");
+            } else {
+                out.writeUTF(exp);
+                //s.close();
+                String data = in.readUTF();
+                if(!exp.equals("historico")){
+                    System.out.println("= " + data);
+                } else {
+                    System.out.println(data);
+                }
+            }
 		}catch (UnknownHostException e){System.out.println("Socket:"+e.getMessage());
 		}catch (EOFException e){System.out.println("EOF:"+e.getMessage());
 		}catch (IOException e){System.out.println("readline:"+e.getMessage());
