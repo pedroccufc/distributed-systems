@@ -1,0 +1,12 @@
+# Java / Python generated files
+*.class
+*.jar
+*.war
+**/target/
+**/build/
+**/__pycache__/
+*.py[cod]
+.venv/
+.DS_Store
+.idea/
+.vscode/
